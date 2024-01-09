@@ -1,33 +1,34 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 public class CompetitorList {
-    private ArrayList<Competitor> competitors;
+    private ArrayList<Competitor> competitorList;
 
     // Constructor
     //public methods
     public CompetitorList() {
-        this.competitors = new ArrayList<Competitor>();
+        this.competitorList = new ArrayList<Competitor>();
     }
-    public CompetitorList(String filename) {
-        this.competitors = new ArrayList<Competitor>();
-        this.LoadData(filename);
+    public CompetitorList(String competitorType) {
+        String filename = "src/LongJumpCompetition.csv";
+        this.competitorList = new ArrayList<Competitor>();
+        this.loadCompetitorsFromFile(filename, competitorType);
     }
 
     // Generic method to read competitors from a file
-    public void LoadData(String filename) {
+    public void loadCompetitorsFromFile(String filename, String type) {
         try {
             Scanner scanner = new Scanner(new File(filename));
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                Competitor competitor = parseCompetitor(line);
+                Competitor competitor = parseCompetitor(line, type);
                 if (competitor != null) {
-                    competitors.add(competitor);
+                    competitorList.add(competitor);
                 }
             }
             scanner.close();
@@ -37,13 +38,13 @@ public class CompetitorList {
     }
 
     // Method to parse a line of CSV and create a Competitor object
-    private Competitor parseCompetitor(String line) {
+    private Competitor parseCompetitor(String line, String type) {
         String[] data = line.split(",");
 
         if (data.length >= 10) {
-            String CompetitorNumber = data[0];
+            String competitorID = data[0];
             String[] nameParts = data[1].trim().split(" ");
-            String name;
+            Name competitorName;
 
             // Parsing name based on the number of parts
             switch (nameParts.length) {
@@ -60,10 +61,10 @@ public class CompetitorList {
                     throw new IllegalArgumentException("Invalid name format: " + data[1]);
             }
 
-            LevelOfCompetitor level = LevelOfCompetitor.valueOf(data[2]);
-            int Age = Integer.parseInt(data[3]);
-            String Gender = data[4];
-            String country = data[5];
+            Level competitorLevel = Level.valueOf(data[2]);
+            int competitorAge = Integer.parseInt(data[3]);
+            String competitorGender = data[4];
+            String competitorCountry = data[5];
 
             ArrayList<Integer> scores = new ArrayList<>();
             // Start from index 6 to parse scores
@@ -73,7 +74,13 @@ public class CompetitorList {
                 }
             }
 
-            Competitor competitor = new LongJump(CompetitorNumber, competitorName, level, Age, Gender, country);
+            Competitor competitor;
+
+            if ("IceSkating".equals(type)) {
+                competitor = new LongJump(competitorID, competitorName, competitorLevel, competitorAge, competitorGender, competitorCountry);
+            } else {
+                return null; // Or throw an exception for unknown type
+            }
 
             // Add scores to the competitor
             for (int score : scores) {
@@ -88,12 +95,12 @@ public class CompetitorList {
     // Helper method to format a Competitor object into a CSV line
     private String formatCompetitorForCsv(Competitor competitor) {
         StringBuilder csvLine = new StringBuilder();
-        csvLine.append(competitor.getCompetitorNumber()).append(",");
-        csvLine.append(competitor.getName().getFullName()).append(",");
-        csvLine.append(competitor.getLevel().toString()).append(",");
-        csvLine.append(competitor.getAge()).append(",");
-        csvLine.append(competitor.getGender()).append(",");
-        csvLine.append(competitor.getCountry());
+        csvLine.append(competitor.getCompetitorID()).append(",");
+        csvLine.append(competitor.getCompetitorName().getFullName()).append(",");
+        csvLine.append(competitor.getCompetitorLevel().toString()).append(",");
+        csvLine.append(competitor.getCompetitorAge()).append(",");
+        csvLine.append(competitor.getCompetitorGender()).append(",");
+        csvLine.append(competitor.getCompetitorCountry());
 
         // Append scores
         ArrayList<Integer> scores = competitor.getScoreArray();
@@ -105,15 +112,16 @@ public class CompetitorList {
     }
 
     // Method to load Ice Skating Competitors
-    public void LoadLongJumpCompetitorsFromFile(String filename) {
-        LoadData(filename);
+    public void loadIceSkatingCompetitorsFromFile(String filename) {
+        loadCompetitorsFromFile(filename, "IceSkating");
     }
 
+    // Method to load Javelin Throw Competitors
     // Method to save competitors to a file
     public void saveCompetitorsToFile(String filename) {
         try {
             FileWriter writer = new FileWriter(filename);
-            for (Competitor competitor : competitors) {
+            for (Competitor competitor : competitorList) {
                 writer.write(formatCompetitorForCsv(competitor) + "\n");
             }
             writer.flush();
@@ -125,14 +133,21 @@ public class CompetitorList {
     }
 
     public ArrayList<Competitor> getCompetitorList() {
-        return this.competitors;
+        return this.competitorList;
     }
 
     public boolean addCompetitor(Competitor competitor) {
         // Check if the competitor is an instance of IceSkatingCompetitor or JavelinThrowCompetitor
-        if (competitor instanceof LongJump ) {
+        if (competitor instanceof LongJump) {
+            // Check if a competitor with the same ID already exists in the list
+            for (Competitor existingCompetitor : competitorList) {
+                if (existingCompetitor.getCompetitorID().equals(competitor.getCompetitorID())) {
+                    // Competitor with this ID already exists, do not add
+                    return false;
+                }
+            }
             // Competitor is unique, add to list
-            competitors.add(competitor);
+            competitorList.add(competitor);
             return true;
         }
         // If competitor is not of the specified types, return false or handle differently
@@ -141,25 +156,25 @@ public class CompetitorList {
 
 
     public void removeCompetitor(Competitor competitor) {
-        this.competitors.remove(competitor);
+        this.competitorList.remove(competitor);
     }
 
-    public void alterCompetitorDetails(int CompetitorNumber, Name newName, LevelOfCompetitor newLevel, int newAge, String newGender, String newCountry) {
-        for (Competitor competitor : competitors) {
-            if (competitor.getCompetitorNumber().equals(CompetitorNumber)) {
+    public void alterCompetitorDetails(String competitorID, Name newName, Level newLevel, int newAge, String newGender, String newCountry) {
+        for (Competitor competitor : competitorList) {
+            if (competitor.getCompetitorID().equals(competitorID)) {
                 competitor.setCompetitorName(newName.getFirstName(), newName.getMiddleName(), newName.getLastName());
-                competitor.setLevel(newLevel);
-                competitor.setAge(newAge);
-                competitor.setGender(newGender);
-                competitor.setCountry(newCountry);
+                competitor.setCompetitorLevel(newLevel);
+                competitor.setCompetitorAge(newAge);
+                competitor.setCompetitorGender(newGender);
+                competitor.setCompetitorCountry(newCountry);
                 break;
             }
         }
     }
 
-    public Competitor getCompetitorByID(int CompetitorNumber) {
-        for (Competitor competitor : competitors) {
-            if (competitor.getCompetitorNumber().equals(CompetitorNumber)) {
+    public Competitor getCompetitorByID(String competitorID) {
+        for (Competitor competitor : competitorList) {
+            if (competitor.getCompetitorID().equals(competitorID)) {
                 return competitor;
             }
         }
@@ -170,13 +185,16 @@ public class CompetitorList {
         return competitor.getFullDetails();
     }
 
+    public String getCompetitorExtraDetails(Competitor competitor) {
+        return competitor.getCompetitorExtraDetails();
+    }
 
-
-
-    public String getFullCompetitorDetails() {
+    // Method to get full details of all competitors
+    public String getAllCompetitorDetails() {
         StringBuilder details = new StringBuilder();
-        for (Competitor competitor : competitors) {
+        for (Competitor competitor : competitorList) {
             details.append(competitor.getFullDetails()).append("\n");
+            details.append("------------------------------- \n");
         }
         return details.toString();
     }
@@ -187,7 +205,7 @@ public class CompetitorList {
 
     public String getAllShortDetails() {
         StringBuilder details = new StringBuilder();
-        for (Competitor competitor : competitors) {
+        for (Competitor competitor : competitorList) {
             details.append(competitor.getShortDetails()).append("\n");
             details.append("------------------------------- \n");
         }
@@ -195,38 +213,39 @@ public class CompetitorList {
     }
 
     // Method to find the competitor with the highest score
-    public Competitor getHighestOverallScore() {
-        Competitor HighestOverallScore = null;
-        for (Competitor competitor : competitors) {
-            if (HighestOverallScore == null || competitor.getOverallScore() > HighestOverallScore.getOverallScore()) {
-                HighestOverallScore = competitor;
+    public Competitor getTopCompetitor() {
+        Competitor topCompetitor = null;
+        for (Competitor competitor : competitorList) {
+            if (topCompetitor == null || competitor.getOverallScore() > topCompetitor.getOverallScore()) {
+                topCompetitor = competitor;
             }
         }
-        return HighestOverallScore;
+        return topCompetitor;
     }
-
 
     // Example method for a summary statistic - average score
-    public double getTotal() {
+    public double getAverageScore() {
         double totalScore = 0;
-        for (Competitor competitor : competitors) {
+        for (Competitor competitor : competitorList) {
             totalScore += competitor.getOverallScore();
         }
-        return totalScore;
+        return competitorList.isEmpty() ? 0 : totalScore / competitorList.size();
     }
 
-
-    // Example method for a summary statistic - average score
-    public double getAverage() {
-        double totalScore = 0;
-        for (Competitor competitor : competitors) {
-            totalScore += competitor.getOverallScore();
+    // Method to generate a frequency report of scores
+    public Map<Integer, Integer> getScoreFrequency() {
+        Map<Integer, Integer> frequency = new HashMap<>();
+        for (Competitor competitor : competitorList) {
+            for (int score : competitor.getScoreArray()) {
+                frequency.put(score, frequency.getOrDefault(score, 0) + 1);
+            }
         }
-        return totalScore / competitors.size();
+        return frequency;
     }
+
     public int getMaxScore() {
         int maxScore = Integer.MIN_VALUE;
-        for (Competitor competitor : competitors) {
+        for (Competitor competitor : competitorList) {
             for (int score : competitor.getScoreArray()) {
                 if (score > maxScore) {
                     maxScore = score;
@@ -238,7 +257,7 @@ public class CompetitorList {
 
     public int getMinScore() {
         int minScore = Integer.MAX_VALUE;
-        for (Competitor competitor : competitors) {
+        for (Competitor competitor : competitorList) {
             for (int score : competitor.getScoreArray()) {
                 if (score < minScore) {
                     minScore = score;
@@ -248,40 +267,38 @@ public class CompetitorList {
         return minScore;
     }
 
-
-    // Method to generate a frequency report of scores
-    public Map<Integer, Integer> getScoreFrequency() {
-        Map<Integer, Integer> frequency = new HashMap<>();
-        for (Competitor competitor : competitors) {
+    public Map<Integer, Integer> getScoreDistribution() {
+        Map<Integer, Integer> scoreDistribution = new HashMap<>();
+        for (Competitor competitor : competitorList) {
             for (int score : competitor.getScoreArray()) {
-                frequency.put(score, frequency.getOrDefault(score, 0) + 1);
+                scoreDistribution.put(score, scoreDistribution.getOrDefault(score, 0) + 1);
             }
         }
-        return frequency;
+        return scoreDistribution;
     }
 
-
-
     public String generateReport() {
-        String report = "Full Details of Competitors \n" + this.getFullCompetitorDetails();
-        report += "\nDetails of the competitor with the highest overall score  " + this.getHighestOverallScore();
-        report += "\nSummary Statistics of Competition";
-        report += "\nAverage Score of Competition is  " + this.getAverage();
-        report += "\nMax Score of Competition is " + this.getMaxScore();
-        report += "\nMin Score of Competition is " + this.getMinScore();
-        report += "\nTotal Score of the Competition is " + this.getTotal();
-        report += "\nFrequency Report " + this.getScoreFrequency().toString();
-
-        System.out.println(report);
+        String report = "Competitor Details:\n" + this.getAllCompetitorDetails();
+        report += "\n-------Top Competitor:-------\n" + (this.getTopCompetitor() != null ? this.getTopCompetitor().getFullDetails() : "No competitors found.");
+        report += "\n-------Score Statistics:-------";
+        report += "\nAverage Score: " + this.getAverageScore();
+        report += "\nMax Score: " + this.getMaxScore();
+        report += "\nMin Score: " + this.getMinScore();
+        report += "\nScore Distribution: " + this.getScoreDistribution().toString();
+        report += "\nScore Frequency Report: " + this.getScoreFrequency().toString();
+        // Output the report to a file or System.out
+        System.out.println(report); // Temporary for debbugging
         return report;
     }
 
     public String generateLimitedReport() {
         String report = "Competitor Limited Details:\n" + this.getAllShortDetails();
+        report += "\n-------Top Competitor:-------\n" + (this.getTopCompetitor() != null ? this.getTopCompetitor().getShortDetails() : "No competitors found.");
         report += "\n-------Score Statistics:-------";
-        report += "\nAverage Score: " + this.getAverage();
+        report += "\nAverage Score: " + this.getAverageScore();
         report += "\nMax Score: " + this.getMaxScore();
         report += "\nMin Score: " + this.getMinScore();
+        report += "\nScore Distribution: " + this.getScoreDistribution().toString();
         // Output the report to a file or System.out
         System.out.println(report); // Temporary for debugging
         return report;

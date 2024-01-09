@@ -1,135 +1,116 @@
 import java.util.ArrayList;
+public abstract class Competitor {
+    private String competitorID;
+    private Name competitorName;
+    private Level competitorLevel;
+    private int competitorAge;
+    private String competitorGender;
+    private String competitorCountry;
+    private ArrayList<Integer> competitorScore;
 
-public class Competitor {
-    private int CompetitorNumber;
-    private String name;
-
-    private int Age;
-    private String DateOfBirth;
-    private String level;
-    private String country;
-    private String email;
-
-    private String category;
-
-    private int CompetitionNumber;
-
-    private ArrayList<Integer> scores = new ArrayList<Integer>();
-
-
-
-
-    public Competitor (int newCompetitorNumber, String newName, int newAge, String newDateOfBirth, String newLevel, String newCountry, String newEmail, String newCategory, int newCompetitionNumber, ArrayList<Integer> newScores){
-        this.CompetitorNumber = newCompetitorNumber;
-        this.name = newName;
-        this.Age = newAge;
-        this.DateOfBirth = newDateOfBirth;
-        this.level = newLevel;
-        this.country = newCountry;
-        this.email = newEmail;
-        this.category = newCategory;
-        this.CompetitionNumber = newCompetitionNumber;
-        this.scores = newScores;
+    public Competitor(String competitorID, Name competitorName, Level competitorLevel, int competitorAge, String competitorGender, String competitorCountry) {
+        this.competitorID = competitorID;
+        this.competitorName = competitorName;
+        this.competitorLevel = competitorLevel;
+        this.competitorAge = competitorAge;
+        this.competitorGender = competitorGender;
+        this.competitorCountry = competitorCountry;
+        this.competitorScore = new ArrayList<Integer>();
     }
 
-    public int getCompetitorNumber() {
-        return CompetitorNumber;
+    public String getCompetitorID() {
+        return this.competitorID;
     }
 
-    public String getName() {
-        return name;
+    public Name getCompetitorName() {
+        return this.competitorName;
     }
 
-    public int getAge() {
-        return Age;
+    public Level getCompetitorLevel() {
+        return this.competitorLevel;
     }
 
-    public String getDateOfBirth() {
-        return DateOfBirth;
+    public int getCompetitorAge() {
+        return this.competitorAge;
     }
 
-    public String getLevel() {
-        return level;
+    public String getCompetitorGender() {
+        return this.competitorGender;
     }
 
-    public String getCountry() {
-        return country;
+    public String getCompetitorCountry() {
+        return this.competitorCountry;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCompetitorFullName() {
+        return this.competitorName.getFullName();
     }
 
-    public String getCategory() { return category; }
-
-    public int getCompetitionNumber() { return CompetitionNumber; }
-
-    public void setCompetitorNumber(int CompetitorNumber) {
-        this.CompetitorNumber = CompetitorNumber;
+    public String getCompetitorLevelString() {
+        return this.competitorLevel.toString();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public ArrayList<Integer> getScoreArray() {
+        return this.competitorScore;
     }
 
-    public void setAge(int Age) {
-        this.Age = Age;
+    public abstract double getOverallScore();
+
+    public abstract void addScore(int score);
+
+    public void setCompetitorID(String competitorID) {
+        this.competitorID = competitorID;
     }
 
-    public void setDateOfBirth(String DoB) {
-        this.DateOfBirth = DoB;
+    public void setCompetitorLevel(Level competitorLevel) {
+        this.competitorLevel = competitorLevel;
     }
 
-    public void setLevel(String level) {
-        this.level = level;
+    public void setCompetitorName(String firstName, String middleName, String lastName) {
+        this.competitorName.setFirstName(firstName);
+        this.competitorName.setMiddleName(middleName);
+        this.competitorName.setLastName(lastName);
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public boolean hasScores() {
+        return this.competitorScore.size() > 0;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCompetitorAge(int competitorAge) {
+        this.competitorAge = competitorAge;
     }
 
-    public void setCategory(String category) { this.category = category; }
-
-    public void setCompetitionNumber(int CompetitionNumber) { this.CompetitionNumber = CompetitionNumber; }
-
-    public String scoresToString(ArrayList<Integer> scores)
-    {
-        String line = String.valueOf(scores.get(0));
-        for (int i = 1; i < scores.size(); i++) {
-            line = line + ", "+ scores.get(i);
-        }
-        return line;
+    public void setCompetitorGender(String competitorGender) {
+        this.competitorGender = competitorGender;
     }
 
-
-
-    public double getOverallScore(ArrayList<Integer> driverScores) {
-        int score = 0;
-
-        for (int i = 0; i < driverScores.size(); i++) {
-            score += driverScores.get(i);
-        }
-
-        return score;
-    }
-
-    public String getFullDetails() {
-        String fullDetails = "competitor number: " + this.CompetitorNumber + " is " + this.level + ", " + this.name+ ". Born " + this.DateOfBirth + " from " + this.country + "\ntheir email is: " + this.email + ". their scores are " + scoresToString(this.scores) + "\nThis gives him an overall score of" + getOverallScore(this.scores);
-        return fullDetails;
+    public void setCompetitorCountry(String competitorCountry) {
+        this.competitorCountry = competitorCountry;
     }
 
     public String getShortDetails() {
-        String shortDetails = "CN " + this.CompetitorNumber + "(" +this.name+ ") has overall score" + getOverallScore(this.scores);
-        return shortDetails;
+        return "CN " + this.competitorID +
+                ", " + this.competitorName.getInitials() +
+                ", Score: " + this.getOverallScore();
     }
 
-    public static void main(String[] args) {
-        //Competitor comp1 = new Competitor(1,"Mario", "15/10/2001","Pro","itialy","mario@superbros.com");
-        //System.out.println(comp1.getFullDetails());
-
+    public String getFullDetails() {
+        return "Competitor ID: " + this.competitorID + "\n" +
+                "Competitor Name: " + this.competitorName.getFullName() + "\n" +
+                "Competitor Country: " + this.competitorCountry + "\n" +
+                "Competitor Level: " + this.competitorLevel.toString() + "\n" +
+                "Competitor Age: " + this.competitorAge + "\n" +
+                "Competitor Overall Score: " + this.getOverallScore();
     }
+
+    public String getCompetitorExtraDetails(){
+        return "Competitor ID: " + this.getCompetitorID() + "\n" +
+                "Competitor Name: " + this.getCompetitorName().getFullName() + "\n" +
+                "Competitor Country: " + this.getCompetitorCountry() + "\n" +
+                "Competitor Level: " + this.getCompetitorLevel().toString() + "\n" +
+                "Competitor Age: " + this.getCompetitorAge() + "\n" +
+                "Competitor Gender: " + this.getCompetitorGender() + "\n" +
+                "Competitor Overall Score: " + this.getOverallScore();
+    }
+
 }

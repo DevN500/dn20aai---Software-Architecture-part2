@@ -1,10 +1,13 @@
 import javax.swing.SwingUtilities;
 
 public class Manager {
-    private static CompetitorList competitors;
+    private static CompetitorList competitorList;
+    private static StaffList staffList;
 
+    //"IceSkating" or "JavelinThrow" for Filetype
     public Manager() {
-        competitors = new CompetitorList();
+        competitorList = new CompetitorList();
+        staffList = new StaffList();
     }
 
 
@@ -14,7 +17,7 @@ public class Manager {
         Manager manager = new Manager();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                GUI frame = new GUI(competitors);
+                GUI frame = new GUI(staffList, competitorList);
                 frame.setVisible(true);
             }
         });

@@ -1,132 +1,121 @@
 import java.util.ArrayList;
 import java.util.Collections;
 public class LongJump extends Competitor {
-    public LongJump(int newCompetitorNumber, String newName, int newAge, String newDateOfBirth, LevelOfCompetitor newLevel, String newCountry, String newEmail, String newCategory, int newCompetitionNumber) {
-        super(newCompetitorNumber, newName, newAge, newDateOfBirth, newLevel, newCountry, newEmail, newCategory, newCompetitionNumber);
+    public LongJump(String competitorID, Name competitorName, Level competitorLevel, int competitorAge, String competitorGender, String competitorCountry) {
+        super(competitorID, competitorName, competitorLevel, competitorAge, competitorGender, competitorCountry);
     }
 
-    public int getCompetitorNumber() {
-        return super.getCompetitorNumber();
+    public String getCompetitorID() {
+        return super.getCompetitorID();
     }
 
-    public String getName() {
-        return super.getName();
+    public Name getCompetitorName() {
+        return super.getCompetitorName();
     }
 
-    public int getAge() {
-        return super.getAge();
+    public Level getCompetitorLevel() {
+        return super.getCompetitorLevel();
     }
 
-    public String getDateOfBirth() {
-        return super.getDateOfBirth();
+    public int getCompetitorAge() {
+        return super.getCompetitorAge();
     }
 
-    public LevelOfCompetitor getLevel() {
-        return super.getLevel();
+    public String getCompetitorGender() {
+        return super.getCompetitorGender();
     }
 
-    public String getCountry() {
-        return super.getCountry();
+    public String getCompetitorCountry() {
+        return super.getCompetitorCountry();
     }
 
-    public String getEmail() {
-        return super.getEmail();
+    public String getCompetitorFullName() {
+        return super.getCompetitorFullName();
     }
 
-    public String getCategory() {
-        return super.getCategory();
+    public String getCompetitorLevelString() {
+        return super.getCompetitorLevelString();
     }
-
-    public int getCompetitionNumber() {
-        return super.getCompetitionNumber();
-    }
-
 
     public ArrayList<Integer> getScoreArray() {
         return super.getScoreArray();
     }
 
-    public boolean ScoreEligibility() {
-        return super.ScoreEligibility();
+    public boolean hasScores() {
+        return super.hasScores();
     }
 
-
-    public String scoresToString(ArrayList<Integer> Scores)
-    {
-        String list = String.valueOf(Scores.get(0));
-        for (int i = 1; i < Scores.size(); i++) {
-            list = list + ", "+ Scores.get(i);
-        }
-        return super.scoresToString(Scores);
-    }
-    public void setCompetitorNumber(int CompetitorNumber) {
-        super.setCompetitorNumber(CompetitorNumber);
+    public void setCompetitorLevel(Level competitorLevel) {
+        super.setCompetitorLevel(competitorLevel);
     }
 
-    public void setName(String name) {
-        super.setName(name);
+    public void setCompetitorName(String firstName, String middleName, String lastName) {
+        super.setCompetitorName(firstName, middleName, lastName);
     }
 
-    public void setAge(int Age) {
-        super.setAge(Age);
+    public void setCompetitorAge(int competitorAge) {
+        super.setCompetitorAge(competitorAge);
     }
 
-    public void setDateOfBirth(String DoB) {
-        super.setDateOfBirth(DoB);
+    public void setCompetitorGender(String competitorGender) {
+        super.setCompetitorGender(competitorGender);
     }
 
-    public void setLevel(LevelOfCompetitor level) {
-        super.setLevel(level);
-    }
-
-    public void setCountry(String country) {
-        super.setCountry(country);
-    }
-
-    public void setEmail(String email) {
-        super.setEmail(email);
-    }
-
-    public void setCategory(String category) {
-        super.setCategory(category);
-    }
-
-    public void setCompetitionNumber(int CompetitionNumber) {
-        super.setCompetitionNumber(CompetitionNumber);
+    public void setCompetitorCountry(String competitorCountry) {
+        super.setCompetitorCountry(competitorCountry);
     }
 
     @Override
     public void addScore(int score) {
-        if (score >= 0 && score <= 5 && this.getScoreArray().size() == 5) {
+        if (score >= 0 && score <= 5 && this.getScoreArray().size() < 6) {
             this.getScoreArray().add(score);
         }
     }
 
     @Override
     public double getOverallScore() {
-        ArrayList<Integer> scores = getScoreArray();
-        int maxScore = Collections.max(scores);
-        int minScore = Collections.min(scores);
+        int maxScore = Collections.max(this.getScoreArray());
+        int minScore = Collections.min(this.getScoreArray());
 
         double sum = 0;
-        for (int score : scores) {
+        int count = 0;
+        for (int score : this.getScoreArray()) {
             if (score != maxScore && score != minScore) {
                 sum += score;
+                count++;
+            } else {
+                // Ensure only one instance of max and min are removed
+                if (score == maxScore) maxScore = Integer.MIN_VALUE;
+                if (score == minScore) minScore = Integer.MIN_VALUE;
             }
         }
-        return sum / (scores.size()-2);
+        return count > 0 ? sum / count : Double.NaN;
     }
 
     @Override
     public String getShortDetails() {
-        return "CN " + this.getCompetitorNumber() +
-                ", " + this.getName() +
-                ", has overall score " + this.getOverallScore();
+        return "CN " + this.getCompetitorID() +
+                ", " + this.getCompetitorName().getInitials() +
+                ", Score: " + this.getOverallScore();
     }
 
     @Override
     public String getFullDetails() {
-        return "Competitor number " + this.getCompetitorNumber() + "," + this.getName() + ", " + this.getCountry() + ". Born " + this.getDateOfBirth() + " is a " + this.getLevel() + "\ntheir email is: " + this.getEmail() + ". Their Category is " + this.getCategory() + ". Their Age is " + this.getAge() + ". Their Competition Number is " + this.getCompetitorNumber() + "\nThis gives him an overall score of" + this.getOverallScore();
+        return "Competitor ID: " + this.getCompetitorID() + "\n" +
+                "Competitor Name: " + this.getCompetitorName().getFullName() + "\n" +
+                "Competitor Country: " + this.getCompetitorCountry() + "\n" +
+                "Competitor Level: " + this.getCompetitorLevel().toString() + "\n" +
+                "Competitor Age: " + this.getCompetitorAge() + "\n" +
+                "Competitor Overall Score: " + this.getOverallScore();
+    }
+
+    @Override
+    public String getCompetitorExtraDetails(){
+        return "Competitor ID: " + this.getCompetitorID() + "\n" +
+                "Competitor Name: " + this.getCompetitorName().getFullName() + "\n" +
+                "Competitor Country: " + this.getCompetitorCountry() + "\n" +
+                "Competitor Level: " + this.getCompetitorLevel().toString() + "\n" +
+                "Competitor Age: " + this.getCompetitorAge() + "\n" +
+                "Competitor Gender: " + this.getCompetitorGender();
     }
 }
-

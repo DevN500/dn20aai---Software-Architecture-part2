@@ -1,24 +1,24 @@
 public class Staff {
-    private int staff_ID;
-    private String staffName;
-    private TypesOfStaff TypeOfStaff;
+    private String staffID;
+    private Name staffName;
+    private StaffTypes staffType;
 
-    public Staff(int staff_ID, String staffName, TypesOfStaff TypeOfStaff) {
-        this.staff_ID = staff_ID;
+    public Staff(String staffID, Name staffName, StaffTypes staffType) {
+        this.staffID = staffID;
         this.staffName = staffName;
-        this.TypeOfStaff = TypeOfStaff;
+        this.staffType = staffType;
     }
 
-    public int getStaff_ID() {
-        return this.staff_ID;
+    public String getStaffID() {
+        return this.staffID;
     }
 
-    public String getStaffName() {
+    public Name getStaffName() {
         return this.staffName;
     }
 
-    public TypesOfStaff getType() {
-        return this.TypeOfStaff;
+    public StaffTypes getStaffType() {
+        return this.staffType;
     }
 
     public String getStaffFullName() {
@@ -26,15 +26,15 @@ public class Staff {
     }
 
     public String getStaffTypeString() {
-        return this.TypeOfStaff.toString();
+        return this.staffType.toString();
     }
 
-    public void setStaffID(int staff_ID) {
-        this.staff_ID = staff_ID;
+    public void setStaffID(String staffID) {
+        this.staffID = staffID;
     }
 
-    public void setStaffType(TypesOfStaff TypeOfStaff) {
-        this.TypeOfStaff = TypeOfStaff;
+    public void setStaffType(StaffTypes staffType) {
+        this.staffType = staffType;
     }
 
     public void setStaffName(String firstName, String middleName, String lastName) {
@@ -45,9 +45,9 @@ public class Staff {
 
     @Override
     public String toString() {
-        return "Staff ID: " + this.staff_ID + "\n" +
+        return "Staff ID: " + this.staffID + "\n" +
                 "Staff Name: " + this.staffName.getFullName() + "\n" +
-                "Staff Type: " + this.TypeOfStaff.toString();
+                "Staff Type: " + this.staffType.toString();
     }
 
 }
