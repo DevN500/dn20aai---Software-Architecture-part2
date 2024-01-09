@@ -1,9 +1,9 @@
 public class Staff {
     private String staffID;
     private Name staffName;
-    private StaffTypes staffType;
+    private StaffParent staffType;
 
-    public Staff(String staffID, Name staffName, StaffTypes staffType) {
+    public Staff(String staffID, StaffParent staffType) {
         this.staffID = staffID;
         this.staffName = staffName;
         this.staffType = staffType;
@@ -17,7 +17,7 @@ public class Staff {
         return this.staffName;
     }
 
-    public StaffTypes getStaffType() {
+    public StaffParent getStaffType() {
         return this.staffType;
     }
 
@@ -33,14 +33,14 @@ public class Staff {
         this.staffID = staffID;
     }
 
-    public void setStaffType(StaffTypes staffType) {
+    public void setStaffType(StaffParent staffType) {
         this.staffType = staffType;
     }
 
     public void setStaffName(String firstName, String middleName, String lastName) {
         this.staffName.setFirstName(firstName);
         this.staffName.setMiddleName(middleName);
-        this.staffName.setLastName(lastName);
+        this.staffName.setLastname(lastName);
     }
 
     @Override

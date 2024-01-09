@@ -19,20 +19,20 @@ public class GUI extends JFrame {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
-        createMainPanel();
-        createStaffTypePanels();
+        Menu();
+        StaffSections();
 
         add(cardPanel);
     }
 
-    private void createMainPanel() {
+    private void Menu() {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
 
         JPanel idInputPanel = new JPanel();
-        JLabel idInputLabel = new JLabel("Enter Your ID here:");
+        JLabel idInputLabel = new JLabel("Please type in your Staff ID ");
         staffIDField = new JTextField(20);
-        JButton submitButton = new JButton("Submit");
+        JButton submitButton = new JButton("Enter ");
         submitButton.addActionListener(e -> processStaffID());
 
         idInputPanel.add(idInputLabel);
@@ -40,15 +40,15 @@ public class GUI extends JFrame {
         idInputPanel.add(submitButton);
         mainPanel.add(idInputPanel, BorderLayout.SOUTH);
 
-        // Panel for Load and Save buttons
-        JPanel filePanel = new JPanel(new GridLayout(1, 1)); // 2 rows, 1 column
+
+        JPanel filePanel = new JPanel(new GridLayout(1, 1));
 
         JButton loadButton = new JButton("Load data from csv file");
         loadButton.addActionListener(e -> loadCompetitors());
         filePanel.add(loadButton);
 
         mainPanel.add(filePanel, BorderLayout.NORTH);
-        cardPanel.add(mainPanel, "MainPage");
+        cardPanel.add(mainPanel, "Main");
     }
 
     private void processStaffID() {
@@ -58,62 +58,54 @@ public class GUI extends JFrame {
         if (staff != null) {
             cardLayout.show(cardPanel, staff.getStaffType().toString());
         } else {
-            JOptionPane.showMessageDialog(GUI.this, "Staff ID not found");
+            JOptionPane.showMessageDialog(GUI.this, "Staff ID is invalid");
         }
     }
 
     private void loadCompetitors() {
-        String filename = JOptionPane.showInputDialog(this, "Enter filename to load:", "Load Competitors", JOptionPane.QUESTION_MESSAGE);
+        String filename = JOptionPane.showInputDialog(this, "Enter filename to load competitors of LongJump:", "Load Competitors", JOptionPane.QUESTION_MESSAGE);
         if (filename != null && !filename.trim().isEmpty()) {
             Object[] options = {"LongJump"};
             String Competition = (String) JOptionPane.showInputDialog(this, "Select Competition ", "Load Competitors", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
             if (Competition != null) {
-                competitorList.loadCompetitorsFromFile(filename.trim(), Competition);
-                JOptionPane.showMessageDialog(this, "Competitors loaded from " + filename, "Load Successful", JOptionPane.INFORMATION_MESSAGE);
+                competitorList.LoadData(filename.trim(), Competition);
+                JOptionPane.showMessageDialog(this, "Competitors loaded from " + filename, "Data Loading Successful", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Filename is required.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "", "Invalid Input", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    private void createStaffTypePanels() {
-        JPanel emergencyPanel = createPanelWithExitButton(Color.RED, "Emergency");
-        JPanel officialPanel = createPanelWithExitButton(Color.ORANGE, "Official");
+    private void StaffSections() {
+        JPanel emergency = BackButton(Color.RED, "Emergency");
+        JPanel official = BackButton(Color.BLUE, "Official");
 
-        cardPanel.add(emergencyPanel, "Emergency");
-        cardPanel.add(officialPanel, "Official");
+        cardPanel.add(emergency, "Emergency");
+        cardPanel.add(official, "Official");
     }
 
-    private JPanel createPanelWithExitButton(Color backgroundColor, String name) {
+    private JPanel BackButton(Color backgroundColor, String name) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setBackground(backgroundColor);
 
-        JButton exitButton = new JButton("Exit");
-        exitButton.addActionListener(new ActionListener() {
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "MainPage");
+                cardLayout.show(cardPanel, "Main");
             }
         });
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(exitButton);
+        buttonPanel.add(backButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Use switch case to handle different panel types
         switch (name) {
-            case "Emergency":
-                JPanel EmergencyPanel = new JPanel(new GridLayout(4, 1)); // Grid layout for 4 buttons
-                // Create buttons and add them to the EmergencyPanel
-                addEmergencyPanelButtons(EmergencyPanel);
-                panel.add(EmergencyPanel, BorderLayout.CENTER);
-                break;
             case "Official":
-                JPanel OfficialPanel = new JPanel(new GridLayout(5, 1)); // Grid layout for 4 buttons
-                // Create buttons and add them to the EmergencyPanel
+                JPanel OfficialPanel = new JPanel(new GridLayout(5, 1));
                 addOfficialPanelButtons(OfficialPanel);
                 panel.add(OfficialPanel, BorderLayout.CENTER);
                 break;
@@ -124,31 +116,21 @@ public class GUI extends JFrame {
         return panel;
     }
 
-    private void addEmergencyPanelButtons(JPanel emergencyPanel) {
-        JButton searchCompetitorButton = new JButton("Search for Competitor Details");
-        searchCompetitorButton.addActionListener(e -> searchForCompetitorExtraDetails());
-        emergencyPanel.add(searchCompetitorButton);
-    }
-
 
     private void addOfficialPanelButtons(JPanel officialPanel) {
-        JButton searchCompetitorButton = new JButton("Search for Competitor Details");
+        JButton searchCompetitorButton = new JButton("Details of Competitors");
         searchCompetitorButton.addActionListener(e -> searchForCompetitor());
         officialPanel.add(searchCompetitorButton);
 
-        JButton addScoresButton = new JButton("Add Scores for an Competitor");
+        JButton addScoresButton = new JButton("Add Scores for a Competitor");
         addScoresButton.addActionListener(e -> addingScoresForCompetitor());
         officialPanel.add(addScoresButton);
 
-        JButton viewResultsButton = new JButton("View Results/Scores of An Competitor");
+        JButton viewResultsButton = new JButton("View Scores for a Competitor");
         viewResultsButton.addActionListener(e -> searchCompetitorforScores());
         officialPanel.add(viewResultsButton);
 
-        JButton registerCompetitorButton = new JButton("Register a new Competitor");
-        registerCompetitorButton.addActionListener(e -> registerNewCompetitor());
-        officialPanel.add(registerCompetitorButton);
-
-        JButton removeCompetitorButton = new JButton("Remove an existing Competitor");
+        JButton removeCompetitorButton = new JButton("Remove a Competitor");
         removeCompetitorButton.addActionListener(e -> removeCompetitor());
         officialPanel.add(removeCompetitorButton);
 
@@ -156,68 +138,42 @@ public class GUI extends JFrame {
         alterCompetitorDetails.addActionListener(e -> alterCompetitorDetail());
         officialPanel.add(alterCompetitorDetails);
 
-        JButton showGamesButton = new JButton("Show All Matches Report");
+        JButton showGamesButton = new JButton("Show Report");
         showGamesButton.addActionListener(e -> showAllGamesReport());
         officialPanel.add(showGamesButton);
 
-        JButton showGamesLimitedButton = new JButton("Show All Matches Limited Report");
+        JButton showGamesLimitedButton = new JButton("Show summarized Report");
         showGamesLimitedButton.addActionListener(e -> showAllGamesLimitedReport());
         officialPanel.add(showGamesLimitedButton);
-
-        JButton searchCompetitorButton2 = new JButton("Search for Competitor Details");
-        searchCompetitorButton.addActionListener(e -> searchForCompetitorExtraDetails());
-        officialPanel.add(searchCompetitorButton);
     }
 
     private void showAllGamesLimitedReport(){
-        String report = competitorList.generateLimitedReport(); // Call generateReport method
+        String report = competitorList.generateReport();
 
-        // Display the report in a dialog box
-        JTextArea textArea = new JTextArea(15, 50); // Set dimensions as needed
+
+        JTextArea textArea = new JTextArea(15, 50);
         textArea.setText(report);
-        textArea.setEditable(false); // Make it read-only
+        textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
 
-        JOptionPane.showMessageDialog(this, scrollPane, "All Games Limited Report", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, scrollPane, "Summarized Report", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void showAllGamesReport() {
-        String report = competitorList.generateReport(); // Call generateReport method
+        String report = competitorList.generateReport();
 
-        // Display the report in a dialog box
-        JTextArea textArea = new JTextArea(15, 50); // Set dimensions as needed
+
+        JTextArea textArea = new JTextArea(15, 50);
         textArea.setText(report);
-        textArea.setEditable(false); // Make it read-only
+        textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
 
-        JOptionPane.showMessageDialog(this, scrollPane, "All Games Report", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, scrollPane, "Show Report", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void searchForCompetitorExtraDetails() {
-        String competitorID = JOptionPane.showInputDialog(this, "Enter Competitor ID:", "Search Competitor", JOptionPane.QUESTION_MESSAGE);
-
-        if (competitorID != null && !competitorID.trim().isEmpty()) {
-            Competitor competitor = competitorList.getCompetitorByID(competitorID.trim());
-
-            if (competitor != null) {
-                // Ask user if they want to view full details
-                int response = JOptionPane.showConfirmDialog(this, "Competitor found. Do you want to view full Extra details?", "Competitor Found", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-                if (response == JOptionPane.YES_OPTION) {
-                    // User chose to view full details
-                    viewCompetitorExtraDetails(competitor);
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "No competitor found with ID: " + competitorID, "Competitor Not Found", JOptionPane.ERROR_MESSAGE);
-            }
-        } else if (competitorID != null) {
-            JOptionPane.showMessageDialog(this, "Please enter a valid Competitor ID.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
-        }
-        // User cancelled the operation if competitorID is null
-    }
 
     private void searchForCompetitor() {
-        String competitorID = JOptionPane.showInputDialog(this, "Enter Competitor ID:", "Search Competitor", JOptionPane.QUESTION_MESSAGE);
+        String competitorID = JOptionPane.showInputDialog(this, "Please type Competitor number", "Search Competitor", JOptionPane.QUESTION_MESSAGE);
 
         if (competitorID != null && !competitorID.trim().isEmpty()) {
             Competitor competitor = competitorList.getCompetitorByID(competitorID.trim());
@@ -225,25 +181,20 @@ public class GUI extends JFrame {
             if (competitor != null) {
                 // Check if competitor has scores
                 if (!competitor.hasScores()) {
-                    JOptionPane.showMessageDialog(this, "Competitor found but has no scores yet.", "No Scores", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Competitor has no scores", "No Scores", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                int response = JOptionPane.showConfirmDialog(this, "Competitor found. Do you want to view full details?", "Competitor Found", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int response = JOptionPane.showConfirmDialog(this, "Would you like to view full details for a competitor", "Competitor Found", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION) {
                     viewCompetitorDetails(competitor);
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "No competitor found with ID: " + competitorID, "Competitor Not Found", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "No competitor has been found with this number: " + competitorID, "Competitor Not Found", JOptionPane.ERROR_MESSAGE);
             }
         } else if (competitorID != null) {
-            JOptionPane.showMessageDialog(this, "Please enter a valid Competitor ID.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please type a valid Competitor number", "Invalid Input", JOptionPane.WARNING_MESSAGE);
         }
-    }
-
-    private void viewCompetitorExtraDetails(Competitor competitor) {
-        String details = competitorList.getCompetitorExtraDetails(competitor);
-        JOptionPane.showMessageDialog(this, details, "Competitor Extra Details", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void viewCompetitorDetails(Competitor competitor) {
@@ -252,26 +203,26 @@ public class GUI extends JFrame {
     }
 
     private void searchCompetitorforScores() {
-        String competitorID = JOptionPane.showInputDialog(this, "Enter Competitor ID:", "Search Competitor", JOptionPane.QUESTION_MESSAGE);
+        String competitorID = JOptionPane.showInputDialog(this, "Please type Competitor number", "Search Competitor", JOptionPane.QUESTION_MESSAGE);
 
         if (competitorID != null && !competitorID.trim().isEmpty()) {
             Competitor competitor = competitorList.getCompetitorByID(competitorID.trim());
 
             if (competitor != null) {
-                // Ask user if they want to view full details
-                int response = JOptionPane.showConfirmDialog(this, "Competitor found. Do you want to view all Results/Scores?", "Competitor Found", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                int response = JOptionPane.showConfirmDialog(this, "Would you like to view all Scores?", "Competitor Found", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
                 if (response == JOptionPane.YES_OPTION) {
-                    // User chose to view full details
+
                     viewCompetitorScores(competitor);
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "No competitor found with ID: " + competitorID, "Competitor Not Found", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "No competitor has been found with this number " + competitorID, "Competitor Not Found", JOptionPane.ERROR_MESSAGE);
             }
         } else if (competitorID != null) {
-            JOptionPane.showMessageDialog(this, "Please enter a valid Competitor ID.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please type in a valid Competitor number", "Invalid", JOptionPane.WARNING_MESSAGE);
         }
-        // User cancelled the operation if competitorID is null
+
     }
 
     private void viewCompetitorScores(Competitor competitor) {
@@ -280,132 +231,83 @@ public class GUI extends JFrame {
     }
 
     private void addingScoresForCompetitor(){
-        // Prompt for competitor ID
-        String competitorID = JOptionPane.showInputDialog(this, "Enter Competitor ID:", "Add Scores", JOptionPane.QUESTION_MESSAGE);
+
+        String competitorID = JOptionPane.showInputDialog(this, "Please type in a  Competitor number", "Add Scores", JOptionPane.QUESTION_MESSAGE);
         if (competitorID != null && !competitorID.trim().isEmpty()) {
             Competitor competitor = competitorList.getCompetitorByID(competitorID.trim());
             if (competitor != null) {
-                // Prompt for scores
-                String scoreInput = JOptionPane.showInputDialog(this, "Enter scores (comma separated):", "Add Scores", JOptionPane.QUESTION_MESSAGE);
+
+                String scoreInput = JOptionPane.showInputDialog(this, "Enter scores using commas after each score", "Add Scores", JOptionPane.QUESTION_MESSAGE);
                 if (scoreInput != null && !scoreInput.trim().isEmpty()) {
                     String[] scoresStr = scoreInput.split(",");
                     try {
                         for (String scoreStr : scoresStr) {
                             int score = Integer.parseInt(scoreStr.trim());
-                            competitor.addScore(score); // Assuming addScore is a method in Competitor class
+                            competitor.addScore(score);
                         }
-                        JOptionPane.showMessageDialog(this, "Scores added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Scores have been added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
                     } catch (NumberFormatException e) {
                         JOptionPane.showMessageDialog(this, "Invalid score format. Please enter numbers only.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "No competitor found with ID: " + competitorID, "Competitor Not Found", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "No competitor found with this number " + competitorID, "Competitor Not Found", JOptionPane.ERROR_MESSAGE);
             }
         } else if (competitorID != null) {
-            JOptionPane.showMessageDialog(this, "Please enter a valid Competitor ID.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
-        }
-        // User cancelled the operation if competitorID is null
-    }
-
-    private void registerNewCompetitor() {
-        Object[] options = {"LongJump"};
-        int type = JOptionPane.showOptionDialog(this, "Select Competitor Type:", "Register New Competitor", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-
-        if (type == JOptionPane.CLOSED_OPTION) return;
-
-        String competitorID = JOptionPane.showInputDialog(this, "Enter Competitor ID:", "Register New Competitor", JOptionPane.QUESTION_MESSAGE);
-        if (competitorID == null || competitorID.trim().isEmpty()) return;
-
-        String firstName = JOptionPane.showInputDialog(this, "Enter Competitor First Name:", "Register New Competitor", JOptionPane.QUESTION_MESSAGE);
-        String middleName = JOptionPane.showInputDialog(this, "Enter Competitor Middle Name (optional):", "Register New Competitor", JOptionPane.QUESTION_MESSAGE);
-        String lastName = JOptionPane.showInputDialog(this, "Enter Competitor Last Name:", "Register New Competitor", JOptionPane.QUESTION_MESSAGE);
-
-        // Assuming Level is an enum with predefined values
-        Level level = (Level) JOptionPane.showInputDialog(this, "Select Level:", "Register New Competitor", JOptionPane.QUESTION_MESSAGE, null, Level.values(), Level.values()[0]);
-
-        // Collect age as integer
-        int age;
-        try {
-            String ageInput = JOptionPane.showInputDialog(this, "Enter Competitor Age:", "Register New Competitor", JOptionPane.QUESTION_MESSAGE);
-            age = Integer.parseInt(ageInput);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid age format.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            JOptionPane.showMessageDialog(this, "Please enter a valid Competitor number.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
         }
 
-        // Collect gender
-        String gender = JOptionPane.showInputDialog(this, "Enter Competitor Gender (Male/Female):", "Register New Competitor", JOptionPane.QUESTION_MESSAGE);
-
-        // Collect country
-        String country = JOptionPane.showInputDialog(this, "Enter Competitor Country:", "Register New Competitor", JOptionPane.QUESTION_MESSAGE);
-
-        if (firstName == null || lastName == null || gender == null || country == null) {
-            JOptionPane.showMessageDialog(this, "Required information missing.", "Missing Information", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        Name name = new Name(firstName.trim(), lastName.trim(), middleName != null ? middleName.trim() : "");
-
-        Competitor newCompetitor = null;
-        if (type == 0) {
-            newCompetitor = new LongJump(competitorID.trim(), name, level, age, gender, country);
-        }
-
-        competitorList.addCompetitor(newCompetitor);
-        JOptionPane.showMessageDialog(this, "New competitor registered successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void removeCompetitor() {
-        // Prompt the user to enter the competitor's ID to be removed
-        String competitorID = JOptionPane.showInputDialog(this, "Enter Competitor ID to remove:", "Remove Competitor", JOptionPane.QUESTION_MESSAGE);
+
+        String competitorID = JOptionPane.showInputDialog(this, "PLease type Competitor number to remove ", "Remove Competitor", JOptionPane.QUESTION_MESSAGE);
 
         if (competitorID != null && !competitorID.trim().isEmpty()) {
-            // Check if the competitor exists
+
             Competitor competitor = competitorList.getCompetitorByID(competitorID.trim());
             if (competitor != null) {
-                // Remove the competitor
+
                 competitorList.removeCompetitor(competitor);
-                JOptionPane.showMessageDialog(this, "Competitor with ID: " + competitorID + " has been removed.", "Competitor Removed", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Competitor with number " + competitorID + " has been removed.", "Competitor Removed", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                // Competitor not found
-                JOptionPane.showMessageDialog(this, "No competitor found with ID: " + competitorID, "Competitor Not Found", JOptionPane.ERROR_MESSAGE);
+
+                JOptionPane.showMessageDialog(this, "No competitor found with number " + competitorID, "Competitor Not Found", JOptionPane.ERROR_MESSAGE);
             }
         } else if (competitorID != null) {
-            // User pressed OK but didn't enter an ID
-            JOptionPane.showMessageDialog(this, "Please enter a valid Competitor ID.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
+
+            JOptionPane.showMessageDialog(this, "Please enter a valid Competitor number.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
         }
-        // If competitorID is null, the user canceled the operation
+
     }
 
     private void alterCompetitorDetail() {
-        String competitorID = JOptionPane.showInputDialog(this, "Enter Competitor ID to alter:", "Alter Competitor Details", JOptionPane.QUESTION_MESSAGE);
+        String competitorID = JOptionPane.showInputDialog(this, "Enter Competitor number to alter:", "Alter Competitor Details", JOptionPane.QUESTION_MESSAGE);
         if (competitorID == null || competitorID.trim().isEmpty()) return;
 
-        // Check if the competitor exists
+        // Check to see if the competitor exists
         Competitor competitor = competitorList.getCompetitorByID(competitorID.trim());
         if (competitor == null) {
-            JOptionPane.showMessageDialog(this, "No competitor found with ID: " + competitorID, "Competitor Not Found", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No competitor found with number " + competitorID, "Competitor Not Found", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Prompt for new details
-        String firstName = JOptionPane.showInputDialog(this, "Enter new First Name:", competitor.getCompetitorName().getFirstName());
-        String middleName = JOptionPane.showInputDialog(this, "Enter new Middle Name (optional):", competitor.getCompetitorName().getMiddleName());
-        String lastName = JOptionPane.showInputDialog(this, "Enter new Last Name:", competitor.getCompetitorName().getLastName());
-        String levelStr = JOptionPane.showInputDialog(this, "Enter new Level:", competitor.getCompetitorLevel().toString());
-        String ageStr = JOptionPane.showInputDialog(this, "Enter new Age:", Integer.toString(competitor.getCompetitorAge()));
-        String gender = JOptionPane.showInputDialog(this, "Enter new Gender:", competitor.getCompetitorGender());
-        String country = JOptionPane.showInputDialog(this, "Enter new Country:", competitor.getCompetitorCountry());
+
+        String firstName = JOptionPane.showInputDialog(this, "Please type new First Name:", competitor.getName().getFirstName());
+        String middleName = JOptionPane.showInputDialog(this, "Please type new Middle Name (optional):", competitor.getName().getMiddleName());
+        String lastName = JOptionPane.showInputDialog(this, "Please type new Last Name:", competitor.getName().getLastName());
+        String levelStr = JOptionPane.showInputDialog(this, "Please type new level", competitor.getLevelOfCompetitor().toString());
+        String ageStr = JOptionPane.showInputDialog(this, "Please type  new Age:", Integer.toString(competitor.getAge()));
+        String gender = JOptionPane.showInputDialog(this, "Please type new Gender:", competitor.getGender());
+        String country = JOptionPane.showInputDialog(this, "Please type new Country:", competitor.getCountry());
 
         // Validate and parse inputs
         if (firstName == null || lastName == null || levelStr == null || ageStr == null || gender == null || country == null) {
-            JOptionPane.showMessageDialog(this, "Missing information. No changes made.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Invalid Information", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Assuming Level is an enum with values like Level.STANDARD, Level.ADVANCED, etc.
-        Level currentLevel = competitor.getCompetitorLevel();
+        Level currentLevel = competitor.getLevelOfCompetitor();
         Level[] levels = Level.values();
         Level newLevel = (Level) JOptionPane.showInputDialog(this, "Select new Level:", "Alter Competitor Details", JOptionPane.QUESTION_MESSAGE, null, levels, currentLevel);
 

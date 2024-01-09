@@ -1,58 +1,58 @@
 public class Name {
-    private String firstName;
-    private String middleName;
-    private String lastName;
+    private String firstname;
+    private String middlename;
+    private String lastname;
 
-    public Name(String firstName, String lastName, String middleName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.middleName = middleName;
+    public Name(String firstname, String lastname, String middlename) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.middlename = middlename;
     }
 
-    public Name(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.middleName = "";
+    public Name(String firstname, String lastname) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.middlename = "";
     }
 
     public String getFirstName() {
-        return this.firstName;
+        return this.firstname;
     }
 
     public String getMiddleName() {
-        return this.middleName;
+        return this.middlename;
     }
 
     public String getLastName() {
-        return this.lastName;
+        return this.lastname;
     }
 
     public String getFullName() {
-        return firstName + " " + (middleName != null && !middleName.isEmpty() ? middleName + " " : "") + lastName;
+        return firstname + " " + (middlename != null && !middlename.isEmpty() ? middlename + " " : "") + lastname;
     }
 
     public String getInitials() {
-        return (this.firstName.isEmpty() ? "" : this.firstName.substring(0, 1)) +
-                (this.middleName.isEmpty() ? "" : this.middleName.substring(0, 1)) +
-                (this.lastName.isEmpty() ? "" : this.lastName.substring(0, 1));
+        return (this.firstname.isEmpty() ? "" : this.firstname.substring(0, 1)) +
+                (this.middlename.isEmpty() ? "" : this.middlename.substring(0, 1)) +
+                (this.lastname.isEmpty() ? "" : this.lastname.substring(0, 1));
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFirstName(String firstname) {
+        this.firstname = firstname;
     }
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
+    public void setMiddleName(String middlename) {
+        this.middlename = middlename;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     @Override
     public String toString() {
-        return "First Name: " + this.firstName + "\n" +
-                "Middle Name: " + this.middleName + "\n" +
-                "Last Name: " + this.lastName;
+        return "First Name: " + this.firstname + "\n" +
+                "Middle Name: " + this.middlename + "\n" +
+                "Last Name: " + this.lastname;
     }
 
 }
